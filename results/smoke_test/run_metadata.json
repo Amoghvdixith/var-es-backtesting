@@ -1,0 +1,302 @@
+{
+  "run_name": "smoke_test",
+  "execution_timestamp_utc": "2026-11-15T11:17:19Z",
+  "configuration": {
+    "run_name": "smoke_test",
+    "description": "SMOKE TEST ONLY: small configuration for a fast end-to-end check. Not the research baseline.",
+    "data": {
+      "source": "synthetic",
+      "asset_returns_path": "data/smoke_test/asset_returns.csv",
+      "portfolio_returns_path": "data/smoke_test/portfolio_returns.csv",
+      "metadata_path": "data/smoke_test/generation_metadata.json",
+      "input_mode": "returns",
+      "units": "decimal",
+      "date_column": "date"
+    },
+    "synthetic": {
+      "seed": 42,
+      "n_obs": 450,
+      "start_date": "2015-01-02",
+      "assets": [
+        "Equity_A",
+        "Equity_B",
+        "Equity_C",
+        "Equity_D",
+        "Equity_E"
+      ],
+      "latent_mu": [
+        0.0002,
+        0.00015,
+        0.00018,
+        0.0001,
+        0.00012
+      ],
+      "latent_sigma": [
+        0.01,
+        0.012,
+        0.011,
+        0.009,
+        0.013
+      ],
+      "correlation": [
+        [
+          1.0,
+          0.55,
+          0.45,
+          0.4,
+          0.35
+        ],
+        [
+          0.55,
+          1.0,
+          0.5,
+          0.45,
+          0.4
+        ],
+        [
+          0.45,
+          0.5,
+          1.0,
+          0.5,
+          0.4
+        ],
+        [
+          0.4,
+          0.45,
+          0.5,
+          1.0,
+          0.45
+        ],
+        [
+          0.35,
+          0.4,
+          0.4,
+          0.45,
+          1.0
+        ]
+      ],
+      "mixing": {
+        "type": "truncated_inverse_gamma",
+        "nu": 4.0,
+        "upper_bound": 25.0
+      },
+      "regimes": [
+        {
+          "label": "normal",
+          "start": 0,
+          "end": 199,
+          "multiplier": 1.0
+        },
+        {
+          "label": "stress",
+          "start": 200,
+          "end": 229,
+          "multiplier": 2.5
+        },
+        {
+          "label": "normal",
+          "start": 230,
+          "end": 319,
+          "multiplier": 1.0
+        },
+        {
+          "label": "stress",
+          "start": 320,
+          "end": 349,
+          "multiplier": 2.5
+        },
+        {
+          "label": "normal",
+          "start": 350,
+          "end": 449,
+          "multiplier": 1.0
+        }
+      ]
+    },
+    "portfolio": {
+      "weights": {
+        "Equity_A": 0.3,
+        "Equity_B": 0.25,
+        "Equity_C": 0.2,
+        "Equity_D": 0.15,
+        "Equity_E": 0.1
+      },
+      "notional_gbp": 1000000,
+      "long_only": true
+    },
+    "forecast": {
+      "window": 150,
+      "confidence_levels": [
+        0.95,
+        0.975,
+        0.99
+      ],
+      "models": [
+        "historical",
+        "normal",
+        "student_t",
+        "monte_carlo"
+      ]
+    },
+    "student_t": {
+      "nu_upper": 1000.0,
+      "init_nu": 5.0
+    },
+    "monte_carlo": {
+      "master_seed": 20240917,
+      "n_scenarios": 2000
+    },
+    "mc_convergence": {
+      "origin": "first_forecast",
+      "confidence_levels": [
+        0.95,
+        0.975,
+        0.99
+      ],
+      "scenario_counts": [
+        500,
+        2000
+      ],
+      "seeds": [
+        101,
+        102,
+        103
+      ]
+    },
+    "backtest": {
+      "rolling_window": 250,
+      "significance": 0.05
+    },
+    "traffic_light": {
+      "confidence": 0.99,
+      "window": 250
+    },
+    "output_dir": "results/smoke_test"
+  },
+  "seeds": {
+    "synthetic_data_seed": 42,
+    "monte_carlo_master_seed": 20240917,
+    "monte_carlo_seed_derivation": "numpy.random.SeedSequence([master_seed, YYYYMMDD of forecast date, model_id=4])",
+    "mc_convergence_seeds": [
+      101,
+      102,
+      103
+    ]
+  },
+  "source_checksum_sha256": "2fec1fde25c505d6d177365c77821864dc898a412fdd37761756af5254f411a8",
+  "dataset": {
+    "source": "synthetic",
+    "asset_returns_path": "data/smoke_test/asset_returns.csv",
+    "asset_returns_sha256": "aba95d0647a877010547ae879f9e1ca95029cbfe60f8de43ef1e39f5bd81b4aa",
+    "input_mode": "returns",
+    "input_units": "decimal",
+    "assets": [
+      "Equity_A",
+      "Equity_B",
+      "Equity_C",
+      "Equity_D",
+      "Equity_E"
+    ],
+    "n_obs": 450,
+    "first_date": "2015-01-02",
+    "last_date": "2016-09-22",
+    "n_excluded_dates": 0,
+    "excluded_dates": [],
+    "missing_data_policy": "complete-case exclusion; no forward-fill; no reweighting",
+    "stress_intervals": [
+      [
+        "2015-10-09",
+        "2015-11-19"
+      ],
+      [
+        "2016-03-25",
+        "2016-05-05"
+      ]
+    ],
+    "saved_vs_recomputed_portfolio_max_abs_diff": 0.0
+  },
+  "definitions": {
+    "returns": "decimal simple returns (0.01 = 1%)",
+    "portfolio_return": "sum_i w_i * r_i,t with fixed weights (daily rebalanced)",
+    "loss": "loss_t = -portfolio_return_t (positive = loss)",
+    "gbp": "loss_gbp = notional_gbp * loss_t; constant-notional risk comparison, not a compounded wealth simulation",
+    "var_es_units": "VaR and ES reported as decimal losses and in GBP on the fixed reporting notional"
+  },
+  "empirical_var_es_convention": "Equal-weight empirical loss distribution. VaR_c = inverse empirical CDF at c = the ceil(n*c)-th smallest loss. ES_c = average of the worst (1-c) probability mass: with m = n(1-c) and j = floor(m), ES = [sum of the j largest losses + (m-j) * the (j+1)-th largest loss] / m. Exceptions are strict: realized_loss > VaR.",
+  "exception_definition": "realized_loss > VaR (strict)",
+  "independence_adjacency_policy": "transitions counted only between consecutive dataset positions that both have valid forecasts",
+  "environment": {
+    "python_version": "3.14.4",
+    "python_implementation": "CPython",
+    "platform": "Windows",
+    "dependency_versions": {
+      "numpy": "2.5.4",
+      "pandas": "3.1.1",
+      "scipy": "1.18.1",
+      "matplotlib": "3.11.2",
+      "pytest": "9.2.0"
+    }
+  },
+  "forecast_runtime_seconds": 2.46,
+  "forecast_counts": {
+    "n_forecast_dates": 300,
+    "first_forecast_date": "2015-07-31",
+    "last_forecast_date": "2016-09-22",
+    "n_forecast_rows": 3600,
+    "rows_by_model": {
+      "historical": 900,
+      "normal": 900,
+      "student_t": 900,
+      "monte_carlo": 900
+    },
+    "n_invalid_forecast_rows": 0,
+    "invalid_rows_by_model_confidence": [],
+    "n_common_valid_dates": 300,
+    "n_valid_rows_with_es_below_var": 0
+  },
+  "fit_diagnostics": {
+    "fit_status_counts": {
+      "historical": {
+        "ok": 300
+      },
+      "monte_carlo": {
+        "ok": 300
+      },
+      "normal": {
+        "ok": 300
+      },
+      "student_t": {
+        "converged": 300
+      }
+    },
+    "student_t": {
+      "n_upper_nu_bound": 0,
+      "n_lower_nu_bound": 0,
+      "nu_median": 2.8180120100948356,
+      "nu_min": 2.2125000302277362,
+      "nu_max": 10.560498577358077
+    },
+    "monte_carlo": {
+      "n_cov_repaired": 0,
+      "total_asset_draws_below_minus_one": 0
+    }
+  },
+  "mc_convergence": {
+    "executed_utc": "2026-11-15T11:17:24Z",
+    "origin_position": 150,
+    "origin_date": "2015-07-31",
+    "train_start": "2015-01-02",
+    "train_end": "2015-07-30",
+    "scenario_counts": [
+      500,
+      2000
+    ],
+    "seeds": [
+      101,
+      102,
+      103
+    ],
+    "seed_derivation": "numpy.random.SeedSequence([seed, n_scenarios])",
+    "benchmark": "analytical normal with mu_p = w'mu_hat, sigma_p = sqrt(w' Sigma_hat w) from the same window"
+  }
+}

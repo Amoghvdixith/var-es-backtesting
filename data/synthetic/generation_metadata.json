@@ -1,0 +1,174 @@
+{
+  "description": "Synthetic, offline, reproducible equity returns for testing VaR/ES models. Not real market data and not a calibrated model of real equity dynamics.",
+  "seed": 42,
+  "n_obs": 2000,
+  "assets": [
+    "Equity_A",
+    "Equity_B",
+    "Equity_C",
+    "Equity_D",
+    "Equity_E"
+  ],
+  "date_convention": "Synthetic business days (Mon-Fri, no holidays) from pandas.bdate_range",
+  "first_date": "2015-01-02",
+  "last_date": "2022-09-01",
+  "return_units": "decimal simple returns (0.01 = 1%)",
+  "process": "x_t = mu + m_t * s_t * diag(sigma) * chol(C) * z_t;  r_t = expm1(x_t)",
+  "latent_mu_log_return": [
+    0.0002,
+    0.00015,
+    0.00018,
+    0.0001,
+    0.00012
+  ],
+  "latent_sigma_log_return": [
+    0.01,
+    0.012,
+    0.011,
+    0.009,
+    0.013
+  ],
+  "latent_parameters_note": "mu and sigma describe the latent Gaussian log-return innovations before the scale mixture and regime multipliers; they are not the mean/SD of the saved simple returns.",
+  "correlation": [
+    [
+      1.0,
+      0.55,
+      0.45,
+      0.4,
+      0.35
+    ],
+    [
+      0.55,
+      1.0,
+      0.5,
+      0.45,
+      0.4
+    ],
+    [
+      0.45,
+      0.5,
+      1.0,
+      0.5,
+      0.4
+    ],
+    [
+      0.4,
+      0.45,
+      0.5,
+      1.0,
+      0.45
+    ],
+    [
+      0.35,
+      0.4,
+      0.4,
+      0.45,
+      1.0
+    ]
+  ],
+  "mixing": {
+    "type": "truncated_inverse_gamma",
+    "nu": 4.0,
+    "upper_bound": 25.0,
+    "truncation_probability_mass": 0.9969656540975667,
+    "kappa_E_W_given_W_le_U": 1.851851851851852,
+    "normalisation": "s_t = sqrt(W_t / kappa) so that E[s_t^2] = 1",
+    "sampling": "inverse CDF of InvGamma(nu/2, scale=nu/2) evaluated at u * F(U), u ~ U(0,1)"
+  },
+  "regimes": [
+    {
+      "label": "normal",
+      "start": 0,
+      "end": 299,
+      "multiplier": 1.0
+    },
+    {
+      "label": "calm",
+      "start": 300,
+      "end": 699,
+      "multiplier": 0.8
+    },
+    {
+      "label": "normal",
+      "start": 700,
+      "end": 899,
+      "multiplier": 1.0
+    },
+    {
+      "label": "stress",
+      "start": 900,
+      "end": 999,
+      "multiplier": 2.5
+    },
+    {
+      "label": "elevated",
+      "start": 1000,
+      "end": 1199,
+      "multiplier": 1.4
+    },
+    {
+      "label": "normal",
+      "start": 1200,
+      "end": 1499,
+      "multiplier": 1.0
+    },
+    {
+      "label": "stress",
+      "start": 1500,
+      "end": 1599,
+      "multiplier": 2.5
+    },
+    {
+      "label": "normal",
+      "start": 1600,
+      "end": 1999,
+      "multiplier": 1.0
+    }
+  ],
+  "stress_intervals_index_inclusive": [
+    [
+      900,
+      999
+    ],
+    [
+      1500,
+      1599
+    ]
+  ],
+  "clipping": "none",
+  "random_draw_order": "rng = numpy.random.default_rng(seed); z = rng.standard_normal((n, k)); u = rng.uniform(0, 1, n)",
+  "realised_simple_return_mean": {
+    "Equity_A": 0.00012739,
+    "Equity_B": 3.993e-05,
+    "Equity_C": -3.399e-05,
+    "Equity_D": -0.00017499,
+    "Equity_E": 0.00039775
+  },
+  "realised_simple_return_sd": {
+    "Equity_A": 0.01262984,
+    "Equity_B": 0.01607641,
+    "Equity_C": 0.01327184,
+    "Equity_D": 0.01128716,
+    "Equity_E": 0.01650594
+  },
+  "min_simple_return": -0.1490406516037842,
+  "max_simple_return": 0.1414610043691347,
+  "portfolio_weights": {
+    "Equity_A": 0.3,
+    "Equity_B": 0.25,
+    "Equity_C": 0.2,
+    "Equity_D": 0.15,
+    "Equity_E": 0.1
+  },
+  "portfolio_definition": "portfolio_return_t = sum_i w_i * r_i,t (daily rebalanced to fixed weights)",
+  "files": {
+    "asset_returns": {
+      "path": "data/synthetic/asset_returns.csv",
+      "sha256": "f69f2c8615c8caa1af81be00ba629872528bb83d5627b42c3653ee358ef4054f"
+    },
+    "portfolio_returns": {
+      "path": "data/synthetic/portfolio_returns.csv",
+      "sha256": "4db4b0a543ec88b0f1a5b1a31f4976b826fb2ee8f72daaa0056d83e038eeddbe"
+    }
+  }
+}

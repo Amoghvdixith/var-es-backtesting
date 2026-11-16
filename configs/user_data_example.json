@@ -1,0 +1,91 @@
+{
+  "run_name": "user_data_example",
+  "description": "Example configuration for a user-supplied CSV. Replace the path and weights with your own data; no file is shipped.",
+  "data": {
+    "source": "user",
+    "asset_returns_path": "data/user/my_returns.csv",
+    "input_mode": "returns",
+    "units": "decimal",
+    "date_column": "date",
+    "min_history": 1000
+  },
+  "portfolio": {
+    "weights": {
+      "Equity_A": 0.3,
+      "Equity_B": 0.25,
+      "Equity_C": 0.2,
+      "Equity_D": 0.15,
+      "Equity_E": 0.1
+    },
+    "notional_gbp": 1000000,
+    "long_only": true
+  },
+  "forecast": {
+    "window": 750,
+    "confidence_levels": [
+      0.95,
+      0.975,
+      0.99
+    ],
+    "models": [
+      "historical",
+      "normal",
+      "student_t",
+      "monte_carlo"
+    ]
+  },
+  "student_t": {
+    "nu_upper": 1000.0,
+    "init_nu": 5.0
+  },
+  "monte_carlo": {
+    "master_seed": 20240917,
+    "n_scenarios": 20000
+  },
+  "backtest": {
+    "rolling_window": 250,
+    "significance": 0.05
+  },
+  "traffic_light": {
+    "confidence": 0.99,
+    "window": 250
+  },
+  "stress_intervals": [],
+  "output_dir": "results/user_data",
+  "mc_convergence": {
+    "origin": "first_forecast",
+    "confidence_levels": [
+      0.95,
+      0.975,
+      0.99
+    ],
+    "scenario_counts": [
+      1000,
+      5000,
+      20000,
+      100000
+    ],
+    "seeds": [
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120
+    ]
+  }
+}

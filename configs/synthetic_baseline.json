@@ -1,0 +1,60 @@
+{
+  "run_name": "synthetic_baseline",
+  "description": "Baseline synthetic five-asset equity portfolio; one-day VaR/ES; rolling 750-observation out-of-sample forecasts.",
+  "data": {
+    "source": "synthetic",
+    "asset_returns_path": "data/synthetic/asset_returns.csv",
+    "portfolio_returns_path": "data/synthetic/portfolio_returns.csv",
+    "metadata_path": "data/synthetic/generation_metadata.json",
+    "input_mode": "returns",
+    "units": "decimal",
+    "date_column": "date"
+  },
+  "synthetic": {
+    "seed": 42,
+    "n_obs": 2000,
+    "start_date": "2015-01-02",
+    "assets": ["Equity_A", "Equity_B", "Equity_C", "Equity_D", "Equity_E"],
+    "latent_mu": [0.00020, 0.00015, 0.00018, 0.00010, 0.00012],
+    "latent_sigma": [0.010, 0.012, 0.011, 0.009, 0.013],
+    "correlation": [
+      [1.00, 0.55, 0.45, 0.40, 0.35],
+      [0.55, 1.00, 0.50, 0.45, 0.40],
+      [0.45, 0.50, 1.00, 0.50, 0.40],
+      [0.40, 0.45, 0.50, 1.00, 0.45],
+      [0.35, 0.40, 0.40, 0.45, 1.00]
+    ],
+    "mixing": {"type": "truncated_inverse_gamma", "nu": 4.0, "upper_bound": 25.0},
+    "regimes": [
+      {"label": "normal", "start": 0, "end": 299, "multiplier": 1.0},
+      {"label": "calm", "start": 300, "end": 699, "multiplier": 0.8},
+      {"label": "normal", "start": 700, "end": 899, "multiplier": 1.0},
+      {"label": "stress", "start": 900, "end": 999, "multiplier": 2.5},
+      {"label": "elevated", "start": 1000, "end": 1199, "multiplier": 1.4},
+      {"label": "normal", "start": 1200, "end": 1499, "multiplier": 1.0},
+      {"label": "stress", "start": 1500, "end": 1599, "multiplier": 2.5},
+      {"label": "normal", "start": 1600, "end": 1999, "multiplier": 1.0}
+    ]
+  },
+  "portfolio": {
+    "weights": {"Equity_A": 0.30, "Equity_B": 0.25, "Equity_C": 0.20, "Equity_D": 0.15, "Equity_E": 0.10},
+    "notional_gbp": 1000000,
+    "long_only": true
+  },
+  "forecast": {
+    "window": 750,
+    "confidence_levels": [0.95, 0.975, 0.99],
+    "models": ["historical", "normal", "student_t", "monte_carlo"]
+  },
+  "student_t": {"nu_upper": 1000.0, "init_nu": 5.0},
+  "monte_carlo": {"master_seed": 20240917, "n_scenarios": 20000},
+  "mc_convergence": {
+    "origin": "first_forecast",
+    "confidence_levels": [0.95, 0.975, 0.99],
+    "scenario_counts": [1000, 5000, 20000, 100000],
+    "seeds": [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120]
+  },
+  "backtest": {"rolling_window": 250, "significance": 0.05},
+  "traffic_light": {"confidence": 0.99, "window": 250},
+  "output_dir": "results/synthetic_baseline"
+}

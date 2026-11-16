@@ -1,0 +1,375 @@
+{
+  "run_name": "synthetic_baseline",
+  "execution_timestamp_utc": "2026-11-15T11:51:46Z",
+  "configuration": {
+    "run_name": "synthetic_baseline",
+    "description": "Baseline synthetic five-asset equity portfolio; one-day VaR/ES; rolling 750-observation out-of-sample forecasts.",
+    "data": {
+      "source": "synthetic",
+      "asset_returns_path": "data/synthetic/asset_returns.csv",
+      "portfolio_returns_path": "data/synthetic/portfolio_returns.csv",
+      "metadata_path": "data/synthetic/generation_metadata.json",
+      "input_mode": "returns",
+      "units": "decimal",
+      "date_column": "date"
+    },
+    "synthetic": {
+      "seed": 42,
+      "n_obs": 2000,
+      "start_date": "2015-01-02",
+      "assets": [
+        "Equity_A",
+        "Equity_B",
+        "Equity_C",
+        "Equity_D",
+        "Equity_E"
+      ],
+      "latent_mu": [
+        0.0002,
+        0.00015,
+        0.00018,
+        0.0001,
+        0.00012
+      ],
+      "latent_sigma": [
+        0.01,
+        0.012,
+        0.011,
+        0.009,
+        0.013
+      ],
+      "correlation": [
+        [
+          1.0,
+          0.55,
+          0.45,
+          0.4,
+          0.35
+        ],
+        [
+          0.55,
+          1.0,
+          0.5,
+          0.45,
+          0.4
+        ],
+        [
+          0.45,
+          0.5,
+          1.0,
+          0.5,
+          0.4
+        ],
+        [
+          0.4,
+          0.45,
+          0.5,
+          1.0,
+          0.45
+        ],
+        [
+          0.35,
+          0.4,
+          0.4,
+          0.45,
+          1.0
+        ]
+      ],
+      "mixing": {
+        "type": "truncated_inverse_gamma",
+        "nu": 4.0,
+        "upper_bound": 25.0
+      },
+      "regimes": [
+        {
+          "label": "normal",
+          "start": 0,
+          "end": 299,
+          "multiplier": 1.0
+        },
+        {
+          "label": "calm",
+          "start": 300,
+          "end": 699,
+          "multiplier": 0.8
+        },
+        {
+          "label": "normal",
+          "start": 700,
+          "end": 899,
+          "multiplier": 1.0
+        },
+        {
+          "label": "stress",
+          "start": 900,
+          "end": 999,
+          "multiplier": 2.5
+        },
+        {
+          "label": "elevated",
+          "start": 1000,
+          "end": 1199,
+          "multiplier": 1.4
+        },
+        {
+          "label": "normal",
+          "start": 1200,
+          "end": 1499,
+          "multiplier": 1.0
+        },
+        {
+          "label": "stress",
+          "start": 1500,
+          "end": 1599,
+          "multiplier": 2.5
+        },
+        {
+          "label": "normal",
+          "start": 1600,
+          "end": 1999,
+          "multiplier": 1.0
+        }
+      ]
+    },
+    "portfolio": {
+      "weights": {
+        "Equity_A": 0.3,
+        "Equity_B": 0.25,
+        "Equity_C": 0.2,
+        "Equity_D": 0.15,
+        "Equity_E": 0.1
+      },
+      "notional_gbp": 1000000,
+      "long_only": true
+    },
+    "forecast": {
+      "window": 750,
+      "confidence_levels": [
+        0.95,
+        0.975,
+        0.99
+      ],
+      "models": [
+        "historical",
+        "normal",
+        "student_t",
+        "monte_carlo"
+      ]
+    },
+    "student_t": {
+      "nu_upper": 1000.0,
+      "init_nu": 5.0
+    },
+    "monte_carlo": {
+      "master_seed": 20240917,
+      "n_scenarios": 20000
+    },
+    "mc_convergence": {
+      "origin": "first_forecast",
+      "confidence_levels": [
+        0.95,
+        0.975,
+        0.99
+      ],
+      "scenario_counts": [
+        1000,
+        5000,
+        20000,
+        100000
+      ],
+      "seeds": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120
+      ]
+    },
+    "backtest": {
+      "rolling_window": 250,
+      "significance": 0.05
+    },
+    "traffic_light": {
+      "confidence": 0.99,
+      "window": 250
+    },
+    "output_dir": "results/synthetic_baseline"
+  },
+  "seeds": {
+    "synthetic_data_seed": 42,
+    "monte_carlo_master_seed": 20240917,
+    "monte_carlo_seed_derivation": "numpy.random.SeedSequence([master_seed, YYYYMMDD of forecast date, model_id=4])",
+    "mc_convergence_seeds": [
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120
+    ]
+  },
+  "source_checksum_sha256": "c44482e2f4fa05c7441e5d8af6c1825faa9cc4705687cfdcd00895d73bfdb9ef",
+  "dataset": {
+    "source": "synthetic",
+    "asset_returns_path": "data/synthetic/asset_returns.csv",
+    "asset_returns_sha256": "f69f2c8615c8caa1af81be00ba629872528bb83d5627b42c3653ee358ef4054f",
+    "input_mode": "returns",
+    "input_units": "decimal",
+    "assets": [
+      "Equity_A",
+      "Equity_B",
+      "Equity_C",
+      "Equity_D",
+      "Equity_E"
+    ],
+    "n_obs": 2000,
+    "first_date": "2015-01-02",
+    "last_date": "2022-09-01",
+    "n_excluded_dates": 0,
+    "excluded_dates": [],
+    "missing_data_policy": "complete-case exclusion; no forward-fill; no reweighting",
+    "stress_intervals": [
+      [
+        "2018-06-15",
+        "2018-11-01"
+      ],
+      [
+        "2020-10-02",
+        "2021-02-18"
+      ]
+    ],
+    "saved_vs_recomputed_portfolio_max_abs_diff": 0.0
+  },
+  "definitions": {
+    "returns": "decimal simple returns (0.01 = 1%)",
+    "portfolio_return": "sum_i w_i * r_i,t with fixed weights (daily rebalanced)",
+    "loss": "loss_t = -portfolio_return_t (positive = loss)",
+    "gbp": "loss_gbp = notional_gbp * loss_t; constant-notional risk comparison, not a compounded wealth simulation",
+    "var_es_units": "VaR and ES reported as decimal losses and in GBP on the fixed reporting notional"
+  },
+  "empirical_var_es_convention": "Equal-weight empirical loss distribution. VaR_c = inverse empirical CDF at c = the ceil(n*c)-th smallest loss. ES_c = average of the worst (1-c) probability mass: with m = n(1-c) and j = floor(m), ES = [sum of the j largest losses + (m-j) * the (j+1)-th largest loss] / m. Exceptions are strict: realized_loss > VaR.",
+  "exception_definition": "realized_loss > VaR (strict)",
+  "independence_adjacency_policy": "transitions counted only between consecutive dataset positions that both have valid forecasts",
+  "environment": {
+    "python_version": "3.14.4",
+    "python_implementation": "CPython",
+    "platform": "Windows",
+    "dependency_versions": {
+      "numpy": "2.5.4",
+      "pandas": "3.1.1",
+      "scipy": "1.18.1",
+      "matplotlib": "3.11.2",
+      "pytest": "9.2.0"
+    }
+  },
+  "forecast_runtime_seconds": 14.6,
+  "forecast_counts": {
+    "n_forecast_dates": 1250,
+    "first_forecast_date": "2017-11-17",
+    "last_forecast_date": "2022-09-01",
+    "n_forecast_rows": 15000,
+    "rows_by_model": {
+      "historical": 3750,
+      "normal": 3750,
+      "student_t": 3750,
+      "monte_carlo": 3750
+    },
+    "n_invalid_forecast_rows": 0,
+    "invalid_rows_by_model_confidence": [],
+    "n_common_valid_dates": 1250,
+    "n_valid_rows_with_es_below_var": 0
+  },
+  "fit_diagnostics": {
+    "fit_status_counts": {
+      "historical": {
+        "ok": 1250
+      },
+      "monte_carlo": {
+        "ok": 1250
+      },
+      "normal": {
+        "ok": 1250
+      },
+      "student_t": {
+        "converged": 1250
+      }
+    },
+    "student_t": {
+      "n_upper_nu_bound": 0,
+      "n_lower_nu_bound": 0,
+      "nu_median": 2.525806352377449,
+      "nu_min": 2.148939095074984,
+      "nu_max": 5.30389169485907
+    },
+    "monte_carlo": {
+      "n_cov_repaired": 0,
+      "total_asset_draws_below_minus_one": 0
+    }
+  },
+  "mc_convergence": {
+    "executed_utc": "2026-11-15T11:51:53Z",
+    "origin_position": 750,
+    "origin_date": "2017-11-17",
+    "train_start": "2015-01-02",
+    "train_end": "2017-11-16",
+    "scenario_counts": [
+      1000,
+      5000,
+      20000,
+      100000
+    ],
+    "seeds": [
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120
+    ],
+    "seed_derivation": "numpy.random.SeedSequence([seed, n_scenarios])",
+    "benchmark": "analytical normal with mu_p = w'mu_hat, sigma_p = sqrt(w' Sigma_hat w) from the same window"
+  }
+}
